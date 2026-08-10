@@ -25,12 +25,20 @@
 var NAVTREE =
 [
   [ "ArduinoUno", "index.html", [
+    [ "Estruturas de dados", "annotated.html", [
+      [ "Estruturas de Dados", "annotated.html", "annotated_dup" ],
+      [ "Índice das Estruturas de Dados", "classes.html", null ],
+      [ "Campos de Dados", "functions.html", [
+        [ "Todos", "functions.html", null ],
+        [ "Variáveis", "functions_vars.html", null ]
+      ] ]
+    ] ],
     [ "Arquivos", "files.html", [
       [ "Lista de Arquivos", "files.html", "files_dup" ],
       [ "Globais", "globals.html", [
         [ "Todos", "globals.html", null ],
         [ "Funções", "globals_func.html", null ],
-        [ "Definições e Macros", "globals_defs.html", null ]
+        [ "Definições de Tipos", "globals_type.html", null ]
       ] ]
     ] ]
   ] ]
@@ -38,7 +46,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"dir_68267d1309a1af8e8297ef4c3efbcdba.html"
+"annotated.html"
 ];
 
 var SYNCONMSG = 'clique para desativar a sincronização do painel';

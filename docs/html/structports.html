@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.15.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ArduinoUno: Referência do Arquivo src/main.c</title>
+<title>ArduinoUno: Referência da Estrutura ports</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -63,7 +63,7 @@ $(function() {
   </div>
 </div>
 <script type="text/javascript">
-$(function(){initNavTree('main_8c.html','',''); });
+$(function(){initNavTree('structports.html','',''); });
 </script>
 <div id="container">
 <div id="doc-content">
@@ -89,40 +89,79 @@ $(function(){initNavTree('main_8c.html','',''); });
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">Referência do Arquivo main.c</div></div>
+  <div class="headertitle"><div class="title">Referência da Estrutura ports</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;util/delay.h&gt;</code><br />
-<code>#include &lt;avr/io.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="ports_8h_source.html">ports.h</a>&quot;</code><br />
-</div><div class="textblock"><div class="dynheader">
-Gráfico de dependência de inclusões para main.c:</div>
-<div class="dyncontent">
-<div class="center"><img src="main_8c__incl.png" border="0" usemap="#asrc_2main_8c" loading="lazy" alt=""/></div>
-</div>
-</div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
-Funções</h2></td></tr>
-<tr class="memitem:a840291bc02cba5474a4cb46a9b9566fe" id="r_a840291bc02cba5474a4cb46a9b9566fe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a840291bc02cba5474a4cb46a9b9566fe">main</a> (void)</td></tr>
+
+<p><code>#include &lt;<a class="el" href="ports_8h_source.html">ports.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Campos de Dados</h2></td></tr>
+<tr class="memitem:a064225cac98a37e5ddea0bf833335dc4" id="r_a064225cac98a37e5ddea0bf833335dc4"><td class="memItemLeft" align="right" valign="top">volatile uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a064225cac98a37e5ddea0bf833335dc4">port</a></td></tr>
+<tr class="memitem:aa277f83bf7b9d0231c1459fd31f9491b" id="r_aa277f83bf7b9d0231c1459fd31f9491b"><td class="memItemLeft" align="right" valign="top">volatile uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa277f83bf7b9d0231c1459fd31f9491b">ddr</a></td></tr>
+<tr class="memitem:a1b698e8474aa0db6ebbc9ccbac87c92c" id="r_a1b698e8474aa0db6ebbc9ccbac87c92c"><td class="memItemLeft" align="right" valign="top">volatile uint8_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b698e8474aa0db6ebbc9ccbac87c92c">pin</a></td></tr>
+<tr class="memitem:aec785888352c6dcd29bae3141ee7214b" id="r_aec785888352c6dcd29bae3141ee7214b"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec785888352c6dcd29bae3141ee7214b">bit</a></td></tr>
 </table>
-<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Funções</h2>
-<a id="a840291bc02cba5474a4cb46a9b9566fe" name="a840291bc02cba5474a4cb46a9b9566fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a840291bc02cba5474a4cb46a9b9566fe">&#9670;&#160;</a></span>main()</h2>
+<a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Campos</h2>
+<a id="aec785888352c6dcd29bae3141ee7214b" name="aec785888352c6dcd29bae3141ee7214b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec785888352c6dcd29bae3141ee7214b">&#9670;&#160;</a></span>bit</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
+          <td class="memname">uint8_t ports::bit</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
+<a id="aa277f83bf7b9d0231c1459fd31f9491b" name="aa277f83bf7b9d0231c1459fd31f9491b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa277f83bf7b9d0231c1459fd31f9491b">&#9670;&#160;</a></span>ddr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile uint8_t* ports::ddr</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1b698e8474aa0db6ebbc9ccbac87c92c" name="a1b698e8474aa0db6ebbc9ccbac87c92c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b698e8474aa0db6ebbc9ccbac87c92c">&#9670;&#160;</a></span>pin</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile uint8_t* ports::pin</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a064225cac98a37e5ddea0bf833335dc4" name="a064225cac98a37e5ddea0bf833335dc4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a064225cac98a37e5ddea0bf833335dc4">&#9670;&#160;</a></span>port</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile uint8_t* ports::port</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<hr/>A documentação para essa estrutura foi gerada a partir do seguinte arquivo:<ul>
+<li>include/<a class="el" href="ports_8h_source.html">ports.h</a></li>
+</ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
@@ -136,7 +175,7 @@ Funções</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a href="main_8c.html">main.c</a></li>
+    <li class="navelem"><a href="structports.html">ports</a></li>
     <li class="footer">Gerado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
   </ul>
 </div>

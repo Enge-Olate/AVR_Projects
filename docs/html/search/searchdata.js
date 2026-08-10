@@ -1,24 +1,30 @@
 var indexSectionsWithContent =
 {
-  0: "glm",
-  1: "gm",
-  2: "gm",
-  3: "l"
+  0: "bdgmp",
+  1: "p",
+  2: "mp",
+  3: "m",
+  4: "bdp",
+  5: "g"
 };
 
 var indexSectionNames =
 {
   0: "all",
-  1: "files",
-  2: "functions",
-  3: "defines"
+  1: "classes",
+  2: "files",
+  3: "functions",
+  4: "variables",
+  5: "typedefs"
 };
 
 var indexSectionLabels =
 {
   0: "Todos",
-  1: "Arquivos",
-  2: "Funções",
-  3: "Definições e Macros"
+  1: "Estruturas de dados",
+  2: "Arquivos",
+  3: "Funções",
+  4: "Variáveis",
+  5: "Definições de Tipos"
 };
 
