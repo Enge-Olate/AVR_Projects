@@ -1,18 +1,22 @@
 #include <util/delay.h>
 #include <avr/io.h>
-#include "gpio.h"
-#include "button.h"
+#include "ports.h"
+
+static const gpio_t LED_BUILTIN = {
+    .ddr = &DDRB,
+    .port = &PORTB,
+    .pin = &PINB,
+    .bit = PB5
+};
 
 int main(void)
 {
-    button_init();
-    gpio_led_init();
-    while (1)
-    {
-        if (button_read() == BUTTON_PRESSED)
-        {
-            gpio_led_toggle();
-            _delay_ms(500);
+    gpio_output(&LED_BUILTIN);
+    gpio_clear(&LED_BUILTIN);
+    for(;;){
+        if(gpio_read(&LED_BUILTIN) == 0){
+            gpio_toggle(&LED_BUILTIN);
+            _delay_ms(200);
         }
     }
 
