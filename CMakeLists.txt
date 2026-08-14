@@ -5,24 +5,24 @@ project(ArduinoUno C)
 # Configuração da placa
 set(MCU atmega328p)
 set(F_CPU 16000000UL)
+set(BAUD 115200)
+set(PROGRAMER arduino)
+set(PORT /dev/ttyACM0) # Ajuste conforme seu sistema.
+
+include_directories(include)
 
 # Englobando todos os arquivos .c.
 file(GLOB SOURCES
-    src/*.c
+    "src/*.c"
 )
 
-
+set(PROJECT_SOURCES
+	main.c
+	${SOURCES}
+)
 # Executável ELF
 add_executable(${PROJECT_NAME}.elf
-    ${SOURCES}
-)
-# Alvo dos arquivos .c.
-target_sources(${PROJECT_NAME}.elf PRIVATE
-${SOURCES}
-)
-
-target_include_directories(${PROJECT_NAME}.elf PRIVATE
-    include
+    ${PROJECT_SOURCES}
 )
 # Compilação
 target_compile_options(${PROJECT_NAME}.elf PRIVATE
