@@ -61,7 +61,7 @@ static inline void gpio_toggle(const gpio_t *gpio)
  */
 static inline uint8_t gpio_read(const gpio_t *gpio)
 {
-    return (*(gpio->pin) >> (1 << gpio->bit)) & 0x01;
+    return (*(gpio->pin) >> gpio->bit) & 0x01;
 }
 
 #endif /* PORTS_H */
