@@ -19,7 +19,7 @@ void hc595_init(const hc595_t *dev){
 * @brief Implementação da função que escreve no CI 74HC595.
 */
 void hc595_write_byte(const hc595_t *dev, uint8_t data){
-    for (uint8_t i = 7; i >= 0; i--)
+    for (int i = 7; i >= 0; i--)
     {   
         // Limpa o clock
         gpio_clear(&dev->clock);
