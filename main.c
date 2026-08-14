@@ -1,19 +1,6 @@
 #include <util/delay.h>
 #include "ports.h"
-
-static const gpio_t LED_BUILTIN = {
-    .ddr = &DDRB,
-    .port = &PORTB,
-    .pin = &PINB,
-    .bit = PB5
-};
-
-static const gpio_t BASES[] = {
-    {&PORTD, &DDRD, &PIND, PD2},
-    {&PORTD, &DDRD, &PIND, PD3},
-    {&PORTD, &DDRD, &PIND, PD4},
-    {&PORTD, &DDRD, &PIND, PD5},
-};
+#include "gpio_config.h"
 
 int main(void)
 {
