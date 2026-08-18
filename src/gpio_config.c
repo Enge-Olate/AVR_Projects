@@ -17,3 +17,10 @@ const gpio_t BASES[NUM_BASES] = {
     {&PORTD, &DDRD, &PIND, PD4},
     {&PORTD, &DDRD, &PIND, PD5},
 };
+
+const gpio_t BUTTON_STATE = {
+    .ddr = &DDRB,
+    .port = &PORTB,
+    .pin = &PINB,
+    .bit = PB0
+};

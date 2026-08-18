@@ -3,9 +3,11 @@
 
 #include "ports.h"
 
-/* * @brief Váriável para o LED_BUILTIN (led on-board).  */
+/* * @brief LED_BUILTIN (led on-board).  */
 extern const gpio_t LED_BUILTIN;
 
+/* * @brief Botão (on/off).  */
+extern const gpio_t BUTTON_STATE;
 
 /* 
 * @brief Array contendo a configuração das bases dos transistores.
