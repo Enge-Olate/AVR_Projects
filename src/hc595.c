@@ -12,7 +12,7 @@ void hc595_init(const hc595_t *dev){
     gpio_output(&dev->clock);
     gpio_output(&dev->latch);
     gpio_clear(&dev->clock);
-    gpio_clear(&dev->data);
+    gpio_clear(&dev->latch);
 }
 
 /* 
