@@ -8,6 +8,7 @@ set(F_CPU 16000000UL)
 set(BAUD 115200)
 set(PROGRAMER arduino)
 set(PORT /dev/ttyACM0) # Ajuste conforme seu sistema.
+set(SERIAL_PORT /dev/ttyACM0)
 
 include_directories(include)
 
@@ -28,6 +29,7 @@ add_executable(${PROJECT_NAME}.elf
 target_compile_options(${PROJECT_NAME}.elf PRIVATE
     -mmcu=${MCU}
     -DF_CPU=${F_CPU}
+    -DBAUD=${BAUD}
     -Os
     -Wall
     -Wextra
@@ -69,7 +71,6 @@ add_custom_command(
     --mcu=${MCU}
     ${PROJECT_NAME}.elf
 )
-set(SERIAL_PORT /dev/ttyACM0)
 
 add_custom_target(flash
     COMMAND ${AVRDUDE}
