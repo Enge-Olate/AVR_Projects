@@ -5,7 +5,7 @@ project(ArduinoUno C)
 # Configuração da placa
 set(MCU atmega328p)
 set(F_CPU 16000000UL)
-set(BAUD 115200)
+set(BAUD 9600)
 set(PROGRAMER arduino)
 set(PORT /dev/ttyACM0) # Ajuste conforme seu sistema.
 set(SERIAL_PORT /dev/ttyACM0)

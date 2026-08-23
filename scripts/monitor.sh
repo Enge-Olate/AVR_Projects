@@ -1,3 +1,3 @@
 #!/bin/bash
 
-tio -b 115200 /dev/ttyACM0
+tio -b 9600 /dev/ttyACM0
