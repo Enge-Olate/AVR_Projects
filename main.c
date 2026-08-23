@@ -86,7 +86,6 @@ int main(void)
                 display_update_buffer(counter);
                 break;
 
-
             default:
                 printf("Comando não encontrado: %c\r\n", cmd.comando);
                 break;
@@ -118,8 +117,9 @@ int main(void)
             }
             display_update_buffer(counter);
         }
-        gpio_toggle(&LED_BUILTIN);
+
         _delay_ms(60);
     }
+
     return 0;
 }
