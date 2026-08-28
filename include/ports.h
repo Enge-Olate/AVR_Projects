@@ -27,6 +27,17 @@ static inline void gpio_output(const gpio_t *gpio)
 }
 
 /*
+ * @brief Função para definir pino como entrada com resistores internos INPUT_PULLUP.
+ */
+static inline void gpio_input_pullup(const gpio_t *gpio)
+{
+    *(gpio->ddr) &= ~(1 << gpio->bit);
+    *(gpio->port) |= (1 << gpio->bit);
+}
+
+
+
+/*
  * @brief Função para definir pino como entrada.
  */
 static inline void gpio_input(const gpio_t *gpio)

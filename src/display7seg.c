@@ -24,6 +24,7 @@ static const uint8_t BYTES[10] = {
     0x07, // 7
     0x7f, // 8
     0x6f, // 9
+    0x80, // .
 };
 
 /*
