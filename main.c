@@ -17,7 +17,6 @@ const hc595_t CI_PINS = {
     .latch = {&PORTB, &DDRB, &PINB, PB2},
 };
 
-
 void setup_button(void)
 {
     for (uint8_t i = 0; i < 4; i++)
@@ -30,7 +29,6 @@ void setup_button(void)
 * @brief Comandos para os botões.
 *
 */
-
 typedef enum
 {
     NONE = 0,
@@ -38,108 +36,106 @@ typedef enum
     DOWN,
     PAUSE,
     RESET
+} command_t;
 
-} comand_t;
-
-/* @brief Estado do sistema. */
 typedef enum
 {
     STATE_PAUSED = 0,
     STATE_RUNNING_UP,
     STATE_RUNNING_DOWN
-}state_t;
+} state_t;
 
-/* @brief Função para detectar borda de descida.*/
-comand_t check_buttons(void)
+typedef struct
 {
-    static uint8_t last_btn_state[4] = {1,1,1,1};
-    comand_t comand = NONE;
+    uint16_t count;
+    state_t current_state;
+    state_t last_running_dir;
+    uint32_t last_count_update;
+} app_t;
+
+static command_t check_buttons(void)
+{
+    static uint8_t last_btn_state[4] = {1, 1, 1, 1};
+    command_t command = NONE;
+
     for (uint8_t i = 0; i < 4; i++)
     {
         uint8_t current_state = gpio_read(BUTTONS[i]);
         if (last_btn_state[i] == 1 && current_state == 0)
         {
-            switch (i)
-            {
-            case 0:
-                comand = UP;
-                break;
-            case 1:
-                comand = DOWN;
-                break;
-            case 2:
-                comand = PAUSE;
-                break;
-            case 3:
-                comand = RESET;
-                break;
-            default:
-                break;
-            }
+            command = (command_t)(UP + i);
         }
         last_btn_state[i] = current_state;
     }
-    return comand;
+
+    return command;
 }
+
+static void process_command(command_t command, state_t *current_state,
+                            state_t *last_running_dir, uint16_t *count)
+{
+    switch (command)
+    {
+    case PAUSE:
+        *current_state = (*current_state == STATE_PAUSED) ?
+                         *last_running_dir : STATE_PAUSED;
+        break;
+    case UP:
+        *last_running_dir = STATE_RUNNING_UP;
+        *current_state = STATE_RUNNING_UP;
+        break;
+    case DOWN:
+        *last_running_dir = STATE_RUNNING_DOWN;
+        *current_state = STATE_RUNNING_DOWN;
+        break;
+    case RESET:
+        *count = 0;
+        display_update_buffer(*count);
+        break;
+    default:
+        break;
+    }
+}
+
+static void update_count(state_t state, uint16_t *count)
+{
+    if (state == STATE_RUNNING_UP)
+        (*count)++;
+    else if (state == STATE_RUNNING_DOWN)
+        (*count)--;
+    else
+        return;
+
+    display_update_buffer(*count);
+}
+
+static app_t app = {
+    .count = 0,
+    .current_state = STATE_PAUSED,
+    .last_running_dir = STATE_RUNNING_UP,
+    .last_count_update = 0
+};
 
 int main(void)
 {
     display_init(&CI_PINS, BASES);
-    display_update_buffer(9999);
     timer1_init_ctc();
+    timer0_init_ctc();
     setup_button();
-    uint16_t counter = 0;
-    state_t current_state = STATE_PAUSED;
-    state_t last_running_dir = STATE_RUNNING_UP;
-    uint16_t freq = 0;
-    display_update_buffer(counter);
+    display_update_buffer(app.count);
 
     while (1)
     {
-        comand_t comand = check_buttons();
+        process_command(check_buttons(), &app.current_state,
+                        &app.last_running_dir, &app.count);
 
-        switch (comand)
+        uint32_t now = timer0_millis();
+        if ((now - app.last_count_update) >= 200)
         {
-        case PAUSE:
-            if(current_state == STATE_PAUSED)
-                current_state = last_running_dir;
-            else
-            {
-                current_state = STATE_PAUSED;
-            }
-               
-            break;
-        case UP:
-            last_running_dir = STATE_RUNNING_UP;
-            current_state = STATE_RUNNING_UP;
-            break;
-        case DOWN:
-            last_running_dir = STATE_RUNNING_DOWN;
-            current_state = STATE_RUNNING_DOWN;
-            break;
-        case RESET:
-            counter = 0;
-            display_update_buffer(counter);
-            break;
-        default:
-            break;
+            update_count(app.current_state, &app.count);
+            app.last_count_update = now;
         }
-        
-        if (freq++ >= 20)
-        {
-            freq = 0;
-            if (current_state == STATE_RUNNING_UP)
-            {
-                counter++;
-                display_update_buffer(counter);
-            }
-            else if (current_state == STATE_RUNNING_DOWN)
-            {
-                counter--;
-                display_update_buffer(counter);
-            }
-        }
-        _delay_ms(10);
+        _delay_ms(1);
     }
 
     return 0;

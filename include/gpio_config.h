@@ -15,7 +15,6 @@ extern const gpio_t BUTTONS_STATE[];
 /* @brief Pino para leitura do sensor DHT22: PC4.*/
 extern const gpio_t DHT22_PIN;
 
-
 /* 
 * @brief Array contendo a configuração das bases dos transistores.
 * -BASES[0]: PD2;
@@ -25,6 +24,6 @@ extern const gpio_t DHT22_PIN;
 */
 extern const gpio_t BASES[];
 /* * @brief Quantidade de bases. */
-#define NUM_BASES 
+#define NUM_BASES 4
 
 #endif /* GPIO_CONFIG_H */
