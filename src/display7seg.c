@@ -13,7 +13,7 @@ static volatile uint8_t digito_atual = 0;
  * @brief Mapeamento dos bytes para display de sete segmentos de catodo comum.
  */
 
-static const uint8_t BYTES[10] = {
+static const uint8_t BYTES[11] = {
     0x3f, // 0
     0x06, // 1
     0x5b, // 2
