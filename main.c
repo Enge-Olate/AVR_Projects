@@ -11,7 +11,7 @@
 #define BUTTONS &BUTTONS_STATE
 
 
-/* @brief Definindo pinos do PORTB para o CI 74HC595. */
+/* @brief Definingo pinos do PORTB para o CI 74HC595. */
 const hc595_t CI_PINS = {
     .data = {&PORTB, &DDRB, &PINB, PB0},
     .clock = {&PORTB, &DDRB, &PINB, PB1},
@@ -43,7 +43,7 @@ typedef enum
     RESET
 
 
-} command_t;
+} comand_t;
 
 /* @brief Estado do sistema. */
 typedef enum
@@ -51,23 +51,14 @@ typedef enum
     STATE_PAUSED = 0,
     STATE_RUNNING_UP,
 
-    STATE_RUNNING_DOWN,
+    STATE_RUNNING_DOWN
 }state_t;
 
-
-typedef struct
-{
-    uint16_t count;
-    state_t current_state;
-    state_t last_running_dir;
-    uint32_t last_count_update;
-} app_t;
-
 /* @brief Função para detectar borda de descida.*/
-command_t check_buttons(void)
+comand_t check_buttons(void)
 {
     static uint8_t last_btn_state[4] = {1,1,1,1};
-    command_t comand = NONE;
+    comand_t comand = NONE;
     for (uint8_t i = 0; i < 4; i++)
     {
         uint8_t current_state = gpio_read(BUTTONS[i]);
@@ -98,90 +89,67 @@ command_t check_buttons(void)
 }
 
 
-static void process_comand(command_t command, state_t *current_state, state_t *last_running_dir, uint16_t *count)
+typedef struct
 {
-    switch (command)
+
+    display_init(&CI_PINS, BASES);
+    display_update_buffer(9999);
+    timer1_init_ctc();
+    setup_button();
+    uint16_t counter = 0;
+    state_t current_state = STATE_PAUSED;
+    state_t last_running_dir = STATE_RUNNING_UP;
+    uint16_t freq = 0;
+    display_update_buffer(counter);
+
+    while (1)
+    {
+        comand_t comand = check_buttons();
+
+        switch (comand)
         {
         case PAUSE:
-            if(*current_state == STATE_PAUSED)
-                *current_state = *last_running_dir;
+            if(current_state == STATE_PAUSED)
+                current_state = last_running_dir;
             else
             {
-                *current_state = STATE_PAUSED;
+                current_state = STATE_PAUSED;
             }
                
             break;
         case UP:
-            *last_running_dir = STATE_RUNNING_UP;
-            *current_state = STATE_RUNNING_UP;
+            last_running_dir = STATE_RUNNING_UP;
+            current_state = STATE_RUNNING_UP;
             break;
         case DOWN:
-            *last_running_dir = STATE_RUNNING_DOWN;
-            *current_state = STATE_RUNNING_DOWN;
+            last_running_dir = STATE_RUNNING_DOWN;
+            current_state = STATE_RUNNING_DOWN;
             break;
         case RESET:
-            *count = 0;
-            display_update_buffer(*count);
+            counter = 0;
+            display_update_buffer(counter);
             break;
         default:
             break;
         }
 
-}
-
-/* @brief Atualização do display com o contador.*/
-static void update_count(
-    state_t state,
-    uint16_t *count)
-{
-    switch (state)
-    {
-        case STATE_RUNNING_UP:
-
-            (*count)++;
-            display_update_buffer(*count);
-
-            break;
-
-        case STATE_RUNNING_DOWN:
-
-            (*count)--;
-            display_update_buffer(*count);
-
-            break;
-
-        default:
-            break;
-    }
-}
-
-app_t app =
-{
-    .count = 0,
-    .current_state = STATE_PAUSED,
-    .last_running_dir = STATE_RUNNING_UP,
-    .last_count_update = 0
-};
-
-int main(void)
-{
-    display_init(&CI_PINS, BASES);
-    timer1_init_ctc();
-    timer0_init_ctc();
-    setup_button();
-    
-
-    while (1)
-    {
-
-        process_comand(check_buttons(), &app.current_state, &app.last_running_dir, &app.count);
-        uint32_t now = timer0_millis();
-        if ((now - app.last_count_update) >= 20)   
+        
+        if (freq++ >= 20)
         {
-            update_count(app.current_state, &app.count);
+            freq = 0;
+            if (current_state == STATE_RUNNING_UP)
+            {
+                counter++;
+                display_update_buffer(counter);
+            }
+            else if (current_state == STATE_RUNNING_DOWN)
+            {
+                counter--;
+                display_update_buffer(counter);
+            }
+
         }
-        _delay_ms(100);                   
-     
+        _delay_ms(10);
     }
 
     return 0;
