@@ -26,27 +26,61 @@ void setup_button(void)
     }
 }
 
+/*
+* @brief Comandos para os botões.
+*
+*/
+
 typedef enum
 {
     NONE = 0,
     UP,
     DOWN,
     PAUSE,
-    STOP
+    RESET
 
-} control_t;
+} comand_t;
 
-control_t read_controls(void)
+/* @brief Estado do sistema. */
+typedef enum
 {
-    if (gpio_read(BUTTONS[0]) == 0)
-        return UP;
-    if (gpio_read(BUTTONS[1]) == 0)
-        return DOWN;
-    if (gpio_read(BUTTONS[2]) == 0)
-        return PAUSE;
-    if (gpio_read(BUTTONS[3]) == 0)
-        return STOP;
-    return NONE;
+    STATE_PAUSED = 0,
+    STATE_RUNNING_UP,
+    STATE_RUNNING_DOWN
+}state_t;
+
+/* @brief Função para detectar borda de descida.*/
+comand_t check_buttons(void)
+{
+    static uint8_t last_btn_state[4] = {1,1,1,1};
+    comand_t comand = NONE;
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        uint8_t current_state = gpio_read(BUTTONS[i]);
+        if (last_btn_state[i] == 1 && current_state == 0)
+        {
+            switch (i)
+            {
+            case 0:
+                comand = UP;
+                break;
+            case 1:
+                comand = DOWN;
+                break;
+            case 2:
+                comand = PAUSE;
+                break;
+            case 3:
+                comand = RESET;
+                break;
+            default:
+                break;
+            }
+        }
+        last_btn_state[i] = current_state;
+        
+    }
+    return comand;
 }
 
 int main(void)
@@ -54,42 +88,60 @@ int main(void)
     display_init(&CI_PINS, NUM_BASES);
     display_update_buffer(9999);
     timer1_init_ctc();
-    uint16_t counter = 0;
     setup_button();
-    control_t control = NONE;
+    uint16_t counter = 0;
+    state_t current_state = STATE_PAUSED;
+    state_t last_running_dir = STATE_RUNNING_UP;
+    uint16_t freq = 0;
+    display_update_buffer(counter);
+
     while (1)
     {
-        control = read_controls();
+        comand_t comand = check_buttons();
 
-        if (control != NONE)
+        switch (comand)
         {
-
-            switch (control)
+        case PAUSE:
+            if(current_state == STATE_PAUSED)
+                current_state = last_running_dir;
+            else
             {
-            case UP:
-                counter++;
-
-                break;
-            case DOWN:
-                counter--;
-
-                break;
-            case PAUSE:
-
-                break;
-
-            case STOP:
-                counter = 0;
-
-                break;
-            case NONE:
-            default:
-                break;
+                current_state = STATE_PAUSED;
             }
+               
+            break;
+        case UP:
+            last_running_dir = STATE_RUNNING_UP;
+            current_state = STATE_RUNNING_UP;
+            break;
+        case DOWN:
+            last_running_dir = STATE_RUNNING_DOWN;
+            current_state = STATE_RUNNING_DOWN;
+            break;
+        case RESET:
+            counter = 0;
+            display_update_buffer(counter);
+            break;
+        default:
+            break;
         }
+        
+        if (freq++ >= 20)
+        {
+            freq = 0;
+            if (current_state == STATE_RUNNING_UP)
+            {
+                counter++;
+                display_update_buffer(counter);
+            }
+            else if (current_state == STATE_RUNNING_DOWN)
+            {
+                counter--;
+                display_update_buffer(counter);
+            }
 
-        display_update_buffer(counter);
-        _delay_ms(150);
+        }
+        _delay_ms(10);
     }
 
     return 0;
