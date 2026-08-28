@@ -1,3 +1,4 @@
+#include <avr/interrupt.h>
 #include "timer1.h"
 #include <avr/interrupt.h>
 /*

@@ -9,6 +9,9 @@ extern const gpio_t LED_BUILTIN;
 /* * @brief Botão (on/off).  */
 extern const gpio_t BUTTON_STATE;
 
+/* @brief Array de botões. */
+extern const gpio_t BUTTONS_STATE[];
+
 /* 
 * @brief Array contendo a configuração das bases dos transistores.
 * -BASES[0]: PD2;
