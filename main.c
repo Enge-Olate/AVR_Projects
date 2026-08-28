@@ -37,7 +37,6 @@ typedef enum
     PAUSE,
     RESET
 } command_t;
-
 typedef enum
 {
     STATE_PAUSED = 0,
