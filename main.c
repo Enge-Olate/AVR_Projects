@@ -78,14 +78,13 @@ comand_t check_buttons(void)
             }
         }
         last_btn_state[i] = current_state;
-        
     }
     return comand;
 }
 
 int main(void)
 {
-    display_init(&CI_PINS, NUM_BASES);
+    display_init(&CI_PINS, BASES);
     display_update_buffer(9999);
     timer1_init_ctc();
     setup_button();
@@ -139,7 +138,6 @@ int main(void)
                 counter--;
                 display_update_buffer(counter);
             }
-
         }
         _delay_ms(10);
     }

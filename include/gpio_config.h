@@ -25,6 +25,6 @@ extern const gpio_t DHT22_PIN;
 */
 extern const gpio_t BASES[];
 /* * @brief Quantidade de bases. */
-#define NUM_BASES 4
+#define NUM_BASES 
 
 #endif /* GPIO_CONFIG_H */

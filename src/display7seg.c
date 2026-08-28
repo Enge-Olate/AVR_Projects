@@ -31,7 +31,7 @@ static const uint8_t BYTES[11] = {
 /*
  * @brief Implementação da função display_init()
  */
-void display_init(const hc595_t *shift_reg, const gpio_t bases[4])
+void display_init(const hc595_t *shift_reg, const gpio_t bases[NUM_BASES])
 {
     p_hc595 = shift_reg;
     p_bases = bases;
