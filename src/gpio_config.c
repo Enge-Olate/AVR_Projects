@@ -23,15 +23,14 @@ const gpio_t BUTTON_STATE = {
     .ddr = &DDRB,
     .port = &PORTB,
     .pin = &PINB,
-    .bit = PB0
-};
+    .bit = PB0};
 
 /*
  * @brief Mapeamento para botões de controle do contador digital.
- * PC0 = ++;
- * PC1 = pause;
- * PC2 = reset;
- * PC3 = --.
+ * PB0 = ++;
+ * PB1 = pause;
+ * PB2 = reset;
+ * PB3 = --.
  */
 
 const gpio_t BUTTONS_STATE[] = {
