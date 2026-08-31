@@ -56,7 +56,6 @@ static command_t check_buttons(void)
 {
     static uint8_t last_btn_state[4] = {1, 1, 1, 1};
     command_t command = NONE;
-
     for (uint8_t i = 0; i < 4; i++)
     {
         uint8_t current_state = gpio_read(BUTTONS[i]);
@@ -134,6 +133,7 @@ int main(void)
             update_count(app.current_state, &app.count);
             app.last_count_update = now;
         }
+        
         _delay_ms(1);
     }
 
