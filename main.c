@@ -42,21 +42,30 @@ typedef enum
     PAUSE,
     RESET
 
-} comand_t;
+} command_t;
 
 /* @brief Estado do sistema. */
 typedef enum
 {
     STATE_PAUSED = 0,
     STATE_RUNNING_UP,
-    STATE_RUNNING_DOWN
+    STATE_RUNNING_DOWN,
 }state_t;
 
+
+typedef struct
+{
+    uint16_t count;
+    state_t current_state;
+    state_t last_running_dir;
+    uint32_t last_count_update;
+} app_t;
+
 /* @brief Função para detectar borda de descida.*/
-comand_t check_buttons(void)
+command_t check_buttons(void)
 {
     static uint8_t last_btn_state[4] = {1,1,1,1};
-    comand_t comand = NONE;
+    command_t comand = NONE;
     for (uint8_t i = 0; i < 4; i++)
     {
         uint8_t current_state = gpio_read(BUTTONS[i]);
@@ -86,66 +95,89 @@ comand_t check_buttons(void)
     return comand;
 }
 
-int main(void)
+static void process_comand(command_t command, state_t *current_state, state_t *last_running_dir, uint16_t *count)
 {
-    display_init(&CI_PINS, BASES);
-    // display_update_buffer(9999);
-    timer1_init_ctc();
-    timer0_init_ctc();
-    setup_button();
-    uint16_t counter = 0;
-    state_t current_state = STATE_PAUSED;
-    state_t last_running_dir = STATE_RUNNING_UP;
-    uint32_t last_count_update = 0;
-    display_update_buffer(counter);
-
-    while (1)
-    {
-        comand_t comand = check_buttons();
-
-        switch (comand)
+    switch (command)
         {
         case PAUSE:
-            if(current_state == STATE_PAUSED)
-                current_state = last_running_dir;
+            if(*current_state == STATE_PAUSED)
+                *current_state = *last_running_dir;
             else
             {
-                current_state = STATE_PAUSED;
+                *current_state = STATE_PAUSED;
             }
                
             break;
         case UP:
-            last_running_dir = STATE_RUNNING_UP;
-            current_state = STATE_RUNNING_UP;
+            *last_running_dir = STATE_RUNNING_UP;
+            *current_state = STATE_RUNNING_UP;
             break;
         case DOWN:
-            last_running_dir = STATE_RUNNING_DOWN;
-            current_state = STATE_RUNNING_DOWN;
+            *last_running_dir = STATE_RUNNING_DOWN;
+            *current_state = STATE_RUNNING_DOWN;
             break;
         case RESET:
-            counter = 0;
-            display_update_buffer(counter);
+            *count = 0;
+            display_update_buffer(*count);
             break;
         default:
             break;
         }
-        
-        if ((timer0_millis() - last_count_update) >= 200)
-        {
-            last_count_update = timer0_millis();
-            if (current_state == STATE_RUNNING_UP)
-            {
-                counter++;
-                display_update_buffer(counter);
-            }
-            else if (current_state == STATE_RUNNING_DOWN)
-            {
-                counter--;
-                display_update_buffer(counter);
-            }
 
+}
+
+static void update_count(
+    state_t state,
+    uint16_t *count)
+{
+    switch (state)
+    {
+        case STATE_RUNNING_UP:
+
+            (*count)++;
+            display_update_buffer(*count);
+
+            break;
+
+        case STATE_RUNNING_DOWN:
+
+            (*count)--;
+            display_update_buffer(*count);
+
+            break;
+
+        default:
+            break;
+    }
+}
+
+app_t app =
+{
+    .count = 0,
+    .current_state = STATE_PAUSED,
+    .last_running_dir = STATE_RUNNING_UP,
+    .last_count_update = 0
+};
+
+int main(void)
+{
+    display_init(&CI_PINS, BASES);
+    timer1_init_ctc();
+    timer0_init_ctc();
+    setup_button();
+    
+
+    while (1)
+    {
+
+        process_comand(check_buttons(), &app.current_state, &app.last_running_dir, &app.count);
+        uint32_t now = timer0_millis();
+        if ((now - app.last_count_update) >= 200)   
+        {
+            update_count(app.current_state, &app.count);
         }
-        _delay_ms(1);
+                        
+     
     }
 
     return 0;
