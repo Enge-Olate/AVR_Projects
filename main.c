@@ -133,7 +133,6 @@ int main(void)
             update_count(app.current_state, &app.count);
             app.last_count_update = now;
         }
-        
         _delay_ms(1);
     }
 
