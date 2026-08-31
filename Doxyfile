@@ -522,7 +522,7 @@ LOOKUP_CACHE_SIZE      = 0
 # speed. At this moment only the input processing can be done using multiple
 # threads. Since this is still an experimental feature the default is set to 1,
 # which effectively disables parallel processing. Please report any issues you
-# encounter. Generating dot graphs in parallel is controlled by the
+# encount. Generating dot graphs in parallel is controlled by the
 # DOT_NUM_THREADS setting.
 # Minimum value: 0, maximum value: 512, default value: 1.
 
@@ -950,7 +950,7 @@ WARN_IF_UNDOC_ENUM_VAL = NO
 WARN_LAYOUT_FILE       = YES
 
 # If the WARN_AS_ERROR tag is set to YES then Doxygen will immediately stop when
-# a warning is encountered. If the WARN_AS_ERROR tag is set to FAIL_ON_WARNINGS
+# a warning is encounted. If the WARN_AS_ERROR tag is set to FAIL_ON_WARNINGS
 # then Doxygen will continue running as if WARN_AS_ERROR tag is set to NO, but
 # at the end of the Doxygen process Doxygen will return with a non-zero status.
 # If the WARN_AS_ERROR tag is set to FAIL_ON_WARNINGS_PRINT then Doxygen behaves
@@ -2926,7 +2926,7 @@ DIAFILE_DIRS           =
 # When using PlantUML, the PLANTUML_JAR_PATH tag should be used to specify the
 # path where java can find the plantuml.jar file or to the filename of jar file
 # to be used. If left blank, it is assumed PlantUML is not used or called during
-# a preprocessing step. Doxygen will generate a warning when it encounters a
+# a preprocessing step. Doxygen will generate a warning when it encounts a
 # \startuml command in this case and will not generate output for the diagram.
 
 PLANTUML_JAR_PATH      =
