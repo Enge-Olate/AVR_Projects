@@ -41,7 +41,6 @@ typedef enum
     PAUSE,
     RESET
 
-
 } command_t;
 
 /* @brief Estado do sistema. */
@@ -126,7 +125,10 @@ static void process_comand(command_t command, state_t *current_state, state_t *l
 
 }
 
+<<<<<<< HEAD
 /* @brief Atualização do display com o contador.*/
+=======
+>>>>>>> f692086 (Refatorando main.c.)
 static void update_count(
     state_t state,
     uint16_t *count)
@@ -173,11 +175,13 @@ int main(void)
 
         process_comand(check_buttons(), &app.current_state, &app.last_running_dir, &app.count);
         uint32_t now = timer0_millis();
-        if ((now - app.last_count_update) >= 20)   
+
+        if ((now - app.last_count_update) >= 200)   
         {
             update_count(app.current_state, &app.count);
         }
-        _delay_ms(100);                   
+                        
+
      
     }
 
