@@ -172,11 +172,11 @@ int main(void)
 
         process_comand(check_buttons(), &app.current_state, &app.last_running_dir, &app.count);
         uint32_t now = timer0_millis();
-        if ((now - app.last_count_update) >= 200)   
+        if ((now - app.last_count_update) >= 20)   
         {
             update_count(app.current_state, &app.count);
         }
-                        
+        _delay_ms(100);                   
      
     }
 
