@@ -4,6 +4,7 @@
 #include "gpio_config.h"
 #include "display7seg.h"
 #include "timer1.h"
+#include "timer0.h"
 
 #define BUTTON &BUTTON_STATE
 #define BUTTONS &BUTTONS_STATE
@@ -88,13 +89,14 @@ comand_t check_buttons(void)
 int main(void)
 {
     display_init(&CI_PINS, BASES);
-    display_update_buffer(9999);
+    // display_update_buffer(9999);
     timer1_init_ctc();
+    timer0_init_ctc();
     setup_button();
     uint16_t counter = 0;
     state_t current_state = STATE_PAUSED;
     state_t last_running_dir = STATE_RUNNING_UP;
-    uint16_t freq = 0;
+    uint32_t last_count_update = 0;
     display_update_buffer(counter);
 
     while (1)
@@ -128,9 +130,9 @@ int main(void)
             break;
         }
         
-        if (freq++ >= 20)
+        if ((timer0_millis() - last_count_update) >= 200)
         {
-            freq = 0;
+            last_count_update = timer0_millis();
             if (current_state == STATE_RUNNING_UP)
             {
                 counter++;
@@ -143,7 +145,7 @@ int main(void)
             }
 
         }
-        _delay_ms(10);
+        _delay_ms(1);
     }
 
     return 0;
