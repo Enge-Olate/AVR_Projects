@@ -108,7 +108,7 @@ static void update_count(state_t state, uint16_t *count)
 }
 
 static app_t app = {
-    .count = 0,
+    .count = 9999,
     .current_state = STATE_PAUSED,
     .last_running_dir = STATE_RUNNING_UP,
     .last_count_update = 0
