@@ -27,6 +27,5 @@ void timer1_init_ctc(void)
     TCCR1B |= (1 << WGM12) | (1 << CS11) | (1<<CS10);
     TIMSK1 |= (1 << OCIE1A);
     sei();
-
 }
 

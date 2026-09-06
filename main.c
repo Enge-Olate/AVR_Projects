@@ -10,7 +10,6 @@
 #define BUTTON &BUTTON_STATE
 #define BUTTONS &BUTTONS_STATE
 
-
 /* @brief Definindo pinos do PORTB para o CI 74HC595. */
 const hc595_t CI_PINS = {
     .data = {&PORTB, &DDRB, &PINB, PB0},
@@ -124,8 +123,7 @@ static void process_comand(command_t command, state_t *current_state, state_t *l
         }
 
 }
-
-
+/* @brief Atualização do display com o contador.*/
 static void update_count(
     state_t state,
     uint16_t *count)
