@@ -9,18 +9,15 @@
 #define BUTTON &BUTTON_STATE
 #define BUTTONS &BUTTONS_STATE
 
-/* @brief Definingo pinos do PORTB para o CI 74HC595. */
+/* @brief Definindo pinos do PORTB para o CI 74HC595. */
 const hc595_t CI_PINS = {
     .data = {&PORTB, &DDRB, &PINB, PB0},
     .clock = {&PORTB, &DDRB, &PINB, PB1},
     .latch = {&PORTB, &DDRB, &PINB, PB2},
 };
 
-ISR(TIMER1_COMPA_vect)
-{
-    display_multiplex_step();
-}
 
+/* @brief Setando os botões com o resistor interno da placa Arduíno UNO INPUT_PULLUP. */
 void setup_button(void)
 {
     for (uint8_t i = 0; i < 4; i++)
@@ -126,6 +123,7 @@ static void process_comand(command_t command, state_t *current_state, state_t *l
 
 }
 
+/* @brief Atualização do display com o contador.*/
 static void update_count(
     state_t state,
     uint16_t *count)
