@@ -8,9 +8,8 @@
 #include <stddef.h>
 
 
-#define DHT22_TIMEOUT_US    4000U
+#define DHT22_TIMEOUT_US 4000U
 #define DHT22_STARTUP_DELAY_MS 1000U
-
 
 /*
 * @brief Função para iniciar o PC4 como entrada de dados.
@@ -26,7 +25,10 @@ void dht22_init(void)
 */
 bool dht22_read(dht22_data_t *data)
 {
-    if(data == NULL) return false;
+    if (data == NULL)
+    {
+        return false;
+    }
     uint8_t raw[5] = {0};
     uint16_t timeout;
     
@@ -35,16 +37,14 @@ bool dht22_read(dht22_data_t *data)
     volatile uint8_t *const ddr_reg = DHT22_PIN.ddr;
     const uint8_t pin_mask = (uint8_t)(1<< DHT22_PIN.bit);
 
-   /* 1. Pulso de Start: Saída em LOW por 18 ms */
+    /* 1. Pulso de start: saída em LOW por 18 ms. */
     *ddr_reg  |= pin_mask;
     *port_reg &= ~pin_mask;
     _delay_ms(18);
 
-    /* 2. Libera a linha e ativa pull-up */
+    /* 2. Libera a linha. */
     *ddr_reg  &= ~pin_mask;
     _delay_us(30);
-
-    
     uint8_t sreg = SREG;
 
     /* @brief Desabilita interrupções.*/

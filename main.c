@@ -1,6 +1,5 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
-#include <avr/interrupt.h>
 #include <stdio.h>
 #include "ports.h"
 #include "gpio_config.h"
@@ -184,7 +183,6 @@ int main(void)
     uart_stdio_init();
     printf("UART: OK\r\n");
     display_update_buffer(app.count);
-
     while (1)
     {
         process_command(check_buttons(), &app.current_state,

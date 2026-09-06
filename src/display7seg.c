@@ -111,6 +111,14 @@ void display_update_humi(int16_t humidity)
     buffer_segmentos[3] = BYTES[decimal_part];
 }   
 
+void display_error(void)
+{
+    buffer_segmentos[0] = 0x79;
+    buffer_segmentos[1] = 0x50;
+    buffer_segmentos[2] = 0x50;
+    buffer_segmentos[3] = 0x5c;
+}
+
 
 // @brief Implementação da função para multiplexar as bases dos transistores.
 void display_multiplex_step(void)

@@ -42,11 +42,11 @@ const gpio_t BUTTONS_STATE[] = {
     
 };
 
-/* @brief Mapeamento de hardware para o sensor DHT22*/
-const gpio_t DHT22_PIN=
-{
+/* @brief Pino de dados do sensor DHT22 (A4/PC4). */
+const gpio_t DHT22_PIN = {
     .ddr = &DDRC,
     .port = &PORTC,
     .pin = &PINC,
     .bit = PC4
 };
+
