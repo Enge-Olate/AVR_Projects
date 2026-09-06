@@ -6,7 +6,8 @@ const gpio_t LED_BUILTIN = {
     .ddr = &DDRB,
     .port = &PORTB,
     .pin = &PINB,
-    .bit = PB5};
+    .bit = PB5
+};
 /*
  * @brief Mapeamento de hardware para base transistor.
  */
@@ -22,14 +23,15 @@ const gpio_t BUTTON_STATE = {
     .ddr = &DDRB,
     .port = &PORTB,
     .pin = &PINB,
-    .bit = PB0};
+    .bit = PB0
+};
 
 /*
  * @brief Mapeamento para botões de controle do contador digital.
- * PB0 = ++;
- * PB1 = pause;
- * PB2 = reset;
- * PB3 = --.
+ * PC0 = ++;
+ * PC1 = pause;
+ * PC2 = reset;
+ * PC3 = --.
  */
 
 const gpio_t BUTTONS_STATE[] = {
@@ -38,4 +40,13 @@ const gpio_t BUTTONS_STATE[] = {
     {&PORTC, &DDRC, &PINC, PC2},
     {&PORTC, &DDRC, &PINC, PC3},
     
+};
+
+/* @brief Mapeamento de hardware para o sensor DHT22*/
+const gpio_t DHT22_PIN=
+{
+    .ddr = &DDRC,
+    .port = &PORTC,
+    .pin = &PINC,
+    .bit = PC4
 };
