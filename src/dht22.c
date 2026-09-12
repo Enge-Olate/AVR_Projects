@@ -7,30 +7,25 @@
 #include <stdint.h>
 #include <stddef.h>
 
-/*--------------------------------------------------------------------
- * Constantes
- *-------------------------------------------------------------------*/
 
 #define DHT22_TIMEOUT_US    100U
+#define DHT22_STARTUP_DELAY_MS 1000U
 
-/*--------------------------------------------------------------------
- * Funções privadas
- *-------------------------------------------------------------------*/
 
 /**
- * @brief Aguarda mudança de nível lógico.
+ * @brief Aguarda o pino atingir um nível lógico.
  *
  * @param level Nível esperado.
  * @param timeout_us Timeout em microssegundos.
  *
- * @return true se ocorreu a transição.
+ * @return true se o nível esperado foi detectado.
  * @return false em timeout.
  */
-static bool wait_level(uint8_t level, uint16_t timeout_us)
+static bool wait_for_level(uint8_t level, uint16_t timeout_us)
 {
     while (timeout_us--)
     {
-        if (gpio_read(&DHT22_PIN) != level)
+        if (gpio_read(&DHT22_PIN) == level)
         {
             return true;
         }
@@ -48,8 +43,14 @@ static bool dht22_read_bit(uint8_t *bit)
 {
     uint16_t pulse_width = 0;
 
-    /* espera final do LOW (~50us) */
-    if (!wait_level(0, DHT22_TIMEOUT_US))
+    /* Aguarda o pulso LOW (~50 us). */
+    if (!wait_for_level(0, DHT22_TIMEOUT_US))
+    {
+        return false;
+    }
+
+    /* Aguarda o início do pulso HIGH. */
+    if (!wait_for_level(1, DHT22_TIMEOUT_US))
     {
         return false;
     }
@@ -76,14 +77,12 @@ static bool dht22_read_bit(uint8_t *bit)
     return true;
 }
 
-/*--------------------------------------------------------------------
- * Interface pública
- *-------------------------------------------------------------------*/
 
 void dht22_init(void)
 {
     gpio_output(&DHT22_PIN);
     gpio_set(&DHT22_PIN);
+    _delay_ms(DHT22_STARTUP_DELAY_MS);
 }
 
 bool dht22_read(dht22_data_t *data)
@@ -104,13 +103,13 @@ bool dht22_read(dht22_data_t *data)
 
     gpio_clear(&DHT22_PIN);
 
-    _delay_ms(2);
+    _delay_ms(1.2);
 
     gpio_set(&DHT22_PIN);
 
     _delay_us(30);
 
-    gpio_input(&DHT22_PIN);
+    gpio_input_pullup(&DHT22_PIN);
 
     /*--------------------------------------------------------------
      * Região crítica
@@ -128,17 +127,17 @@ bool dht22_read(dht22_data_t *data)
          * 80 us HIGH
          */
 
-        if (!wait_level(1, DHT22_TIMEOUT_US))
+        if (!wait_for_level(0, DHT22_TIMEOUT_US))
         {
             break;
         }
 
-        if (!wait_level(0, DHT22_TIMEOUT_US))
+        if (!wait_for_level(1, DHT22_TIMEOUT_US))
         {
             break;
         }
 
-        if (!wait_level(1, DHT22_TIMEOUT_US))
+        if (!wait_for_level(0, DHT22_TIMEOUT_US))
         {
             break;
         }
