@@ -1,14 +1,19 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <stdio.h>
 #include "ports.h"
 #include "gpio_config.h"
 #include "display7seg.h"
 #include "timer1.h"
 #include "timer0.h"
+#include "dht22.h"
+#include "uart.h"
 
 #define BUTTON &BUTTON_STATE
 #define BUTTONS &BUTTONS_STATE
+#define MAX_COUNT 9999
+#define COUNT_INTERVAL_MS 600UL
 
 /* @brief Definindo pinos do PORTB para o CI 74HC595. */
 const hc595_t CI_PINS = {
@@ -26,17 +31,18 @@ void setup_button(void)
 }
 
 /*
-* @brief Comandos para os botões.
-*
-*/
+ * @brief Comandos para os botões.
+ *
+ */
 typedef enum
 {
     NONE = 0,
     UP,
     DOWN,
     PAUSE,
-    RESET
+    RESET,
 } command_t;
+
 typedef enum
 {
     STATE_PAUSED = 0,
@@ -50,6 +56,8 @@ typedef struct
     state_t current_state;
     state_t last_running_dir;
     uint32_t last_count_update;
+    uint32_t last_temp_update;
+    int16_t last_temp_tenths;
 } app_t;
 
 static command_t check_buttons(void)
@@ -75,8 +83,7 @@ static void process_command(command_t command, state_t *current_state,
     switch (command)
     {
     case PAUSE:
-        *current_state = (*current_state == STATE_PAUSED) ?
-                         *last_running_dir : STATE_PAUSED;
+        *current_state = (*current_state == STATE_PAUSED) ? *last_running_dir : STATE_PAUSED;
         break;
     case UP:
         *last_running_dir = STATE_RUNNING_UP;
@@ -97,9 +104,9 @@ static void process_command(command_t command, state_t *current_state,
 
 static void update_count(state_t state, uint16_t *count)
 {
-    if (state == STATE_RUNNING_UP)
+    if (state == STATE_RUNNING_UP && *count < MAX_COUNT)
         (*count)++;
-    else if (state == STATE_RUNNING_DOWN)
+    else if (state == STATE_RUNNING_DOWN && *count > 0)
         (*count)--;
     else
         return;
@@ -107,12 +114,41 @@ static void update_count(state_t state, uint16_t *count)
     display_update_buffer(*count);
 }
 
+static void update_temperature(state_t state, uint32_t now,
+                               uint32_t *last_temp_update,
+                               int16_t *last_temp_tenths)
+{
+    if (state != STATE_PAUSED ||
+        (*last_temp_update != 0 && (now - *last_temp_update) < 2000))
+    {
+        return;
+    }
+
+    dht22_data_t current;
+    if (dht22_read(&current))
+    {
+        *last_temp_tenths = (int16_t)(current.temperature * 10.0f);
+        display_update_temp(*last_temp_tenths);
+
+        int16_t absolute_temp = (*last_temp_tenths < 0) ?
+                                -*last_temp_tenths : *last_temp_tenths;
+         printf("TEMP: %s%d.%d C\r\n",
+             (*last_temp_tenths < 0) ? "-" : "",
+             absolute_temp / 10, absolute_temp % 10);
+    }
+    else
+    {
+        printf("DHT22: falha na leitura\r\n");
+    }
+
+    *last_temp_update = now;
+}
+
 static app_t app = {
-    .count = 9999,
-    .current_state = STATE_PAUSED,
+    .count = 0,
+    .current_state = 0,
     .last_running_dir = STATE_RUNNING_UP,
-    .last_count_update = 0
-};
+    .last_count_update = 0};
 
 int main(void)
 {
@@ -120,6 +156,10 @@ int main(void)
     timer1_init_ctc();
     timer0_init_ctc();
     setup_button();
+    // dht22_init();
+    uart_init(9600);
+    uart_stdio_init();
+    printf("UART: OK\r\n");
     display_update_buffer(app.count);
 
     while (1)
@@ -128,11 +168,13 @@ int main(void)
                         &app.last_running_dir, &app.count);
 
         uint32_t now = timer0_millis();
-        if ((now - app.last_count_update) >= 200)
+        if ((now - app.last_count_update) >= COUNT_INTERVAL_MS)
         {
             update_count(app.current_state, &app.count);
             app.last_count_update = now;
         }
+        update_temperature(app.current_state, now,
+                           &app.last_temp_update, &app.last_temp_tenths);
         _delay_ms(1);
     }
 
