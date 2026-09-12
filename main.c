@@ -156,7 +156,8 @@ int main(void)
     timer1_init_ctc();
     timer0_init_ctc();
     setup_button();
-    // dht22_init();
+
+    dht22_init();
     uart_init(9600);
     uart_stdio_init();
     printf("UART: OK\r\n");
