@@ -95,6 +95,22 @@ void display_update_temp(int16_t temperature_tenths)
     }
 }
 
+#define SEG_U ((1<<2) | (1<<3) | (1<<4))
+
+void display_update_humi(int16_t humidity)
+{
+    
+    if(humidity < 0)humidity = 0;
+    if(humidity > 1000) humidity = 1000;
+    uint8_t integer_part = (uint8_t)(humidity / 10);
+    uint8_t decimal_part = (uint8_t)(humidity %10);
+
+    buffer_segmentos[0] = SEG_U;
+    buffer_segmentos[1] = BYTES[(integer_part / 10) %10];
+    buffer_segmentos[2] = BYTES[integer_part  %10] | SEG_DP;
+    buffer_segmentos[3] = BYTES[decimal_part];
+}   
+
 
 // @brief Implementação da função para multiplexar as bases dos transistores.
 void display_multiplex_step(void)

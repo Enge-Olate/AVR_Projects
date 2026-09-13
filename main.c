@@ -13,7 +13,7 @@
 #define BUTTON &BUTTON_STATE
 #define BUTTONS &BUTTONS_STATE
 #define MAX_COUNT 9999
-#define COUNT_INTERVAL_MS 600UL
+#define COUNT_INTERVAL_MS 2000UL
 
 /* @brief Definindo pinos do PORTB para o CI 74HC595. */
 const hc595_t CI_PINS = {
@@ -58,6 +58,8 @@ typedef struct
     uint32_t last_count_update;
     uint32_t last_temp_update;
     int16_t last_temp_tenths;
+    int16_t last_humi_tenths;
+    uint32_t last_humi_update;
 } app_t;
 
 static command_t check_buttons(void)
@@ -130,11 +132,10 @@ static void update_temperature(state_t state, uint32_t now,
         *last_temp_tenths = (int16_t)(current.temperature * 10.0f);
         display_update_temp(*last_temp_tenths);
 
-        int16_t absolute_temp = (*last_temp_tenths < 0) ?
-                                -*last_temp_tenths : *last_temp_tenths;
-         printf("TEMP: %s%d.%d C\r\n",
-             (*last_temp_tenths < 0) ? "-" : "",
-             absolute_temp / 10, absolute_temp % 10);
+        int16_t absolute_temp = (*last_temp_tenths < 0) ? -*last_temp_tenths : *last_temp_tenths;
+        printf("TEMP: %s%d.%d C\r\n",
+               (*last_temp_tenths < 0) ? "-" : "",
+               absolute_temp / 10, absolute_temp % 10);
     }
     else
     {
@@ -142,6 +143,27 @@ static void update_temperature(state_t state, uint32_t now,
     }
 
     *last_temp_update = now;
+}
+
+static void update_humidity(state_t state, uint32_t now, uint32_t *last_humi_update, int16_t *last_humi_tenths)
+{
+    if (state != STATE_PAUSED || (*last_humi_update != 0 && (now - *last_humi_update) < 2000))
+    {
+        return;
+    }
+
+    dht22_data_t current;
+    if (dht22_read(&current))
+    {
+        *last_humi_tenths = (int16_t)(current.humidity * 10.0f);
+        display_update_humi(*last_humi_tenths);
+    }
+    else
+    {
+        printf("DHT22: falha na leitura\r\n");
+    }
+
+    *last_humi_update = now;
 }
 
 static app_t app = {
@@ -156,7 +178,7 @@ int main(void)
     timer1_init_ctc();
     timer0_init_ctc();
     setup_button();
-
+    bool state = false;
     dht22_init();
     uart_init(9600);
     uart_stdio_init();
@@ -173,9 +195,18 @@ int main(void)
         {
             update_count(app.current_state, &app.count);
             app.last_count_update = now;
+            state = !state;
         }
-        update_temperature(app.current_state, now,
-                           &app.last_temp_update, &app.last_temp_tenths);
+        if (!state)
+        {
+            update_temperature(app.current_state, now,
+                               &app.last_temp_update, &app.last_temp_tenths);
+        }
+        else
+        {
+            update_humidity(app.current_state, now, &app.last_humi_update, &app.last_humi_tenths);
+        }
+
         _delay_ms(1);
     }
 
