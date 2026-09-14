@@ -1,6 +1,16 @@
 #include "display7seg.h"
 
 /*
+ * @brief Mapeamento de hardware para base transistor.
+ */
+const gpio_t BASES[NUM_BASES] = {
+    {&PORTD, &DDRD, &PIND, PD2},
+    {&PORTD, &DDRD, &PIND, PD3},
+    {&PORTD, &DDRD, &PIND, PD4},
+    {&PORTD, &DDRD, &PIND, PD5},
+};
+
+/*
  * @brief Variáveis de controle das bases dos tranistores.
  */
 
@@ -118,6 +128,8 @@ void display_error(void)
     buffer_segmentos[2] = 0x50;
     buffer_segmentos[3] = 0x5c;
 }
+
+
 
 
 // @brief Implementação da função para multiplexar as bases dos transistores.

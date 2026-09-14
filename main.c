@@ -2,17 +2,28 @@
 #include <util/delay.h>
 #include <stdio.h>
 #include "ports.h"
-#include "gpio_config.h"
 #include "display7seg.h"
 #include "timer1.h"
 #include "timer0.h"
 #include "dht22.h"
 #include "uart.h"
 
-#define BUTTON &BUTTON_STATE
-#define BUTTONS &BUTTONS_STATE
 #define MAX_COUNT 9999
 #define COUNT_INTERVAL_MS 2000UL
+
+
+/*
+ * @brief Mapeamento de hardware para base transistor.
+ */
+const gpio_t BUTTONS_STATE[] = {
+    {&PORTC, &DDRC, &PINC, PC0},
+    {&PORTC, &DDRC, &PINC, PC1},
+    {&PORTC, &DDRC, &PINC, PC2},
+    {&PORTC, &DDRC, &PINC, PC3},
+    
+};
+
+
 
 /* @brief Definindo pinos do PORTB para o CI 74HC595. */
 const hc595_t CI_PINS = {
@@ -25,7 +36,7 @@ void setup_button(void)
 {
     for (uint8_t i = 0; i < 4; i++)
     {
-        gpio_input_pullup(BUTTONS[i]);
+        gpio_input_pullup(&BUTTONS_STATE[i]);
     }
 }
 
@@ -67,7 +78,7 @@ static command_t check_buttons(void)
     command_t command = NONE;
     for (uint8_t i = 0; i < 4; i++)
     {
-        uint8_t current_state = gpio_read(BUTTONS[i]);
+        uint8_t current_state = gpio_read(&BUTTONS_STATE[i]);
         if (last_btn_state[i] == 1 && current_state == 0)
         {
             command = (command_t)(UP + i);
@@ -138,7 +149,7 @@ static void update_temperature(state_t state, uint32_t now,
     }
     else
     {
-        printf("DHT22: falha na leitura\r\n");
+        display_error();
     }
 
     *last_temp_update = now;
@@ -159,7 +170,7 @@ static void update_humidity(state_t state, uint32_t now, uint32_t *last_humi_upd
     }
     else
     {
-        printf("DHT22: falha na leitura\r\n");
+        display_error();
     }
 
     *last_humi_update = now;

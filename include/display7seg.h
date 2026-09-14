@@ -3,7 +3,7 @@
 
 #include <avr/io.h>
 #include "hc595.h"
-#include "gpio_config.h"
+#include "ports.h"
 /* 
 * @brief Protótipo das funções para o display.
  */
@@ -12,7 +12,6 @@
  void display_update_buffer(uint16_t value);
  void display_update_temp(int16_t temperature_tenths);
  void display_update_humi(int16_t humidity_tenths);
- void display_error(void);
  void display_multiplex_step(void);
  void display_error(void);
 

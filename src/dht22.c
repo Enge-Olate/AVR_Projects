@@ -1,15 +1,23 @@
-#include "dht22.h"
-#include "gpio_config.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
+#include "dht22.h"
+#include "ports.h"
 
 
 #define DHT22_TIMEOUT_US 4000U
 #define DHT22_STARTUP_DELAY_MS 1000U
+
+/* @brief Pino de dados do sensor DHT22 (A4/PC4). */
+const gpio_t DHT22_PIN = {
+    .ddr = &DDRC,
+    .port = &PORTC,
+    .pin = &PINC,
+    .bit = PC4
+};
 
 /*
 * @brief Função para iniciar o PC4 como entrada de dados.
@@ -32,18 +40,17 @@ bool dht22_read(dht22_data_t *data)
     uint8_t raw[5] = {0};
     uint16_t timeout;
     
-    volatile uint8_t *const pin_reg = DHT22_PIN.pin;
-    volatile uint8_t *const port_reg = DHT22_PIN.port;
-    volatile uint8_t *const ddr_reg = DHT22_PIN.ddr;
-    const uint8_t pin_mask = (uint8_t)(1<< DHT22_PIN.bit);
-
+    
     /* 1. Pulso de start: saída em LOW por 18 ms. */
-    *ddr_reg  |= pin_mask;
-    *port_reg &= ~pin_mask;
+    
+    gpio_output(&DHT22_PIN);
+    gpio_clear(&DHT22_PIN);
     _delay_ms(18);
 
     /* 2. Libera a linha. */
-    *ddr_reg  &= ~pin_mask;
+    // *ddr_reg  &= ~pin_mask;
+    gpio_set(&DHT22_PIN);
+    gpio_input(&DHT22_PIN);
     _delay_us(30);
     uint8_t sreg = SREG;
 
@@ -51,7 +58,7 @@ bool dht22_read(dht22_data_t *data)
     cli();
 
     timeout = DHT22_TIMEOUT_US;
-    while (*pin_reg & pin_mask)
+    while (gpio_read(&DHT22_PIN))
     {
         if(--timeout == 0)
         {
@@ -60,7 +67,7 @@ bool dht22_read(dht22_data_t *data)
         }
     }
     timeout = DHT22_TIMEOUT_US;
-    while (!(*pin_reg & pin_mask))
+    while (!(gpio_read(&DHT22_PIN)))
     {
         if(--timeout == 0)
         {
@@ -70,7 +77,7 @@ bool dht22_read(dht22_data_t *data)
     }
 
     timeout = DHT22_TIMEOUT_US;
-    while (*pin_reg & pin_mask)
+    while (gpio_read(&DHT22_PIN))
     {
         if(--timeout == 0)
         {
@@ -84,14 +91,14 @@ bool dht22_read(dht22_data_t *data)
     {
         /* Espera o pulso preparatório LOW (~50 us) */
         timeout = DHT22_TIMEOUT_US;
-        while (!(*pin_reg & pin_mask))
+        while (!(gpio_read(&DHT22_PIN)))
         {
             if (--timeout == 0) { SREG = sreg; return false; }
         }
 
         /* Mede a largura do pulso HIGH */
         uint8_t width = 0;
-        while (*pin_reg & pin_mask)
+        while (gpio_read(&DHT22_PIN))
         {
             width++;
             _delay_us(1);

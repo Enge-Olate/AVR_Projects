@@ -14,6 +14,17 @@ typedef struct ports
     uint8_t bit;
 } gpio_t;
 
+/* 
+* @brief Array contendo a configuração das bases dos transistores.
+* -BASES[0]: PD2;
+* -BASES[1]: PD3;
+* -BASES[2]: PD4;
+* -BASES[3]: PD5;
+*/
+extern const gpio_t BASES[];
+#define NUM_BASES 4
+
+
 /*
  * @brief Protótipos de funções genéricas de uso geral.
  */
